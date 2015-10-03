@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 
 public class MainActivity extends Activity {
 
@@ -12,6 +13,8 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
     }
+
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -33,5 +36,20 @@ public class MainActivity extends Activity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    public void selectDestination(View view) {
+    }
+
+    public void selectBusStop(View view) {
+    }
+
+    public void selectLeavingTime(View view) {
+    }
+
+    public void selectTimeToStop(View view) {
+    }
+
+    public void setReminder(View view) {
     }
 }
