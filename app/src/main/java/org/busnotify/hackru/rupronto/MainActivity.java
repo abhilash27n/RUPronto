@@ -5,16 +5,29 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.EditText;
 
 public class MainActivity extends Activity {
+
+    EditText selectSourceText;
+    EditText selectBusText;
+    EditText selectLeavingTimeText;
+    EditText selectTimeToStopText;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        //Initialize UI components
+        selectSourceText = (EditText) findViewById(R.id.sourceSelectText);
+        selectBusText = (EditText) findViewById(R.id.selectBusText);
+        selectLeavingTimeText = (EditText) findViewById(R.id.leavingTimeText);
+        selectTimeToStopText = (EditText) findViewById(R.id.timeToStop);
+
     }
-
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -38,10 +51,10 @@ public class MainActivity extends Activity {
         return super.onOptionsItemSelected(item);
     }
 
-    public void selectDestination(View view) {
+    public void selectSource(View view) {
     }
 
-    public void selectBusStop(View view) {
+    public void selectBus(View view) {
     }
 
     public void selectLeavingTime(View view) {
@@ -52,4 +65,6 @@ public class MainActivity extends Activity {
 
     public void setReminder(View view) {
     }
+
+
 }

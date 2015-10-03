@@ -12,7 +12,7 @@
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:text="Destination"
-        android:id="@+id/destinationSelect"
+        android:id="@+id/sourceSelectText"
         android:layout_alignParentTop="true"
         android:layout_alignParentStart="true" />
 
@@ -22,7 +22,7 @@
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:text="Bus Stop"
         android:id="@+id/busStopText"
-        android:layout_below="@+id/destinationSelect"
+        android:layout_below="@+id/sourceSelectText"
         android:layout_alignParentStart="true" />
 
     <TextView
@@ -48,28 +48,28 @@
     <EditText
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/destinationSelect"
+        android:id="@+id/sourceSelectText"
         android:layout_alignParentTop="true"
         android:layout_alignParentEnd="true"
         android:layout_toEndOf="@+id/startTimeText"
         android:text="Please select..."
-        android:onClick="selectDestination"/>
+        android:onClick="selectSource"/>
 
     <EditText
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/selectStopText"
-        android:layout_below="@+id/destinationSelect"
-        android:layout_alignStart="@+id/destinationSelect"
+        android:id="@+id/selectBusText"
+        android:layout_below="@+id/sourceSelectText"
+        android:layout_alignStart="@+id/sourceSelectText"
         android:text="Please select..."
-        android:onClick="selectBusStop"/>
+        android:onClick="selectBus"/>
 
     <EditText
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:inputType="time"
         android:ems="10"
-        android:id="@+id/editText3"
+        android:id="@+id/leavingTimeText"
         android:layout_alignTop="@+id/startTimeText"
         android:layout_toEndOf="@+id/startTimeText"
         android:layout_marginStart="32dp"
@@ -82,8 +82,8 @@
         android:inputType="time"
         android:ems="10"
         android:id="@+id/timeToStop"
-        android:layout_below="@+id/editText3"
-        android:layout_alignStart="@+id/editText3"
+        android:layout_below="@+id/leavingTimeText"
+        android:layout_alignStart="@+id/leavingTimeText"
         android:text="choose one.."
         android:onClick="selectTimeToStop"/>
 
@@ -92,9 +92,8 @@
         android:layout_height="wrap_content"
         android:text="Set reminder"
         android:id="@+id/setButton"
-        android:layout_below="@+id/timeToStop"
-        android:layout_toEndOf="@+id/busStopText"
-        android:layout_marginTop="61dp"
-        android:onClick="setReminder"/>
+        android:onClick="setReminder"
+        android:layout_centerVertical="true"
+        android:layout_toEndOf="@+id/startTimeText" />
 
 </RelativeLayout>
