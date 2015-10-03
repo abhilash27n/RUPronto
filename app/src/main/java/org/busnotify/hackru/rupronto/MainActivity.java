@@ -5,18 +5,20 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
 public class MainActivity extends Activity {
 
-    EditText selectBusStopText;
-    TextView selectBusText;
-    EditText selectLeavingTimeText;
-    EditText selectTimeToStopText;
+    Button selectBusStopText;
+    Button selectBusText;
+    Button selectLeavingTimeText;
+    Button selectTimeToStopText;
 
 
 
@@ -26,10 +28,10 @@ public class MainActivity extends Activity {
         setContentView(R.layout.activity_main);
 
         //Initialize UI components
-        selectBusStopText = (EditText) findViewById(R.id.selectBusStopText);
-        selectBusText = (TextView) findViewById(R.id.selectBusText);
-        selectLeavingTimeText = (EditText) findViewById(R.id.selectLeavingTimeText);
-        selectTimeToStopText = (EditText) findViewById(R.id.selectTimeToStopText);
+        selectBusStopText = (Button) findViewById(R.id.selectBusStopText);
+        selectBusText = (Button) findViewById(R.id.selectBusText);
+        selectLeavingTimeText = (Button) findViewById(R.id.selectLeavingTimeText);
+        selectTimeToStopText = (Button) findViewById(R.id.selectTimeToStopText);
 
     }
 
@@ -59,6 +61,7 @@ public class MainActivity extends Activity {
     }
 
     public void selectBus(View view) {
+        Log.e("RUPRONTO", "Selecting bus...");
         CharSequence[] bus = {"LX","Wknd1"};
         AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
         builder.setTitle(R.string.bus)
@@ -68,7 +71,7 @@ public class MainActivity extends Activity {
                         // of the selected item
                     }
                 });
-        builder.create();
+        builder.show();
     }
 
     public void selectLeavingTime(View view) {
