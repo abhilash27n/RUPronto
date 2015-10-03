@@ -53,12 +53,13 @@
         android:text="Please select..."
         android:onClick="selectSource"/>
 
-    <EditText
+    <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/selectBusText"
         android:text="Please select..."
         android:onClick="selectBus"
+        android:clickable="true"
         android:layout_below="@+id/selectBusStopText"
         android:layout_toEndOf="@+id/leavingTimeText" />
 
