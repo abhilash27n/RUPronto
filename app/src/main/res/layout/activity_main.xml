@@ -23,8 +23,7 @@
         android:text="Bus Stop"
         android:id="@+id/busStopText"
         android:layout_below="@+id/destinationSelect"
-        android:layout_alignParentStart="true"
-        android:layout_marginTop="27dp" />
+        android:layout_alignParentStart="true" />
 
     <TextView
         android:layout_width="wrap_content"
