@@ -11,14 +11,19 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.ArrayAdapter;
+
 
 public class MainActivity extends Activity {
 
     Button selectBusStopText;
-    Button selectBusText;
+    Spinner selectBusText;
     Button selectLeavingTimeText;
     Button selectTimeToStopText;
+
+
 
 
 
@@ -29,9 +34,17 @@ public class MainActivity extends Activity {
 
         //Initialize UI components
         selectBusStopText = (Button) findViewById(R.id.selectBusStopText);
-        selectBusText = (Button) findViewById(R.id.selectBusText);
+        selectBusText = (Spinner) findViewById(R.id.selectBusText);
         selectLeavingTimeText = (Button) findViewById(R.id.selectLeavingTimeText);
         selectTimeToStopText = (Button) findViewById(R.id.selectTimeToStopText);
+        Spinner dynamicSpinner = (Spinner) findViewById(R.id.selectBusText);
+
+        String[] items = new String[] { "Chai Latte", "Green Tea", "Black Tea" };
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
+                android.R.layout.simple_spinner_item, items);
+
+        dynamicSpinner.setAdapter(adapter);
+
 
     }
 
