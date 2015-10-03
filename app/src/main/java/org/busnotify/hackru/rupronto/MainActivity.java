@@ -9,7 +9,7 @@ import android.widget.EditText;
 
 public class MainActivity extends Activity {
 
-    EditText selectSourceText;
+    EditText selectBusStopText;
     EditText selectBusText;
     EditText selectLeavingTimeText;
     EditText selectTimeToStopText;
@@ -22,10 +22,10 @@ public class MainActivity extends Activity {
         setContentView(R.layout.activity_main);
 
         //Initialize UI components
-        selectSourceText = (EditText) findViewById(R.id.sourceSelectText);
+        selectBusStopText = (EditText) findViewById(R.id.selectBusStopText);
         selectBusText = (EditText) findViewById(R.id.selectBusText);
-        selectLeavingTimeText = (EditText) findViewById(R.id.leavingTimeText);
-        selectTimeToStopText = (EditText) findViewById(R.id.timeToStop);
+        selectLeavingTimeText = (EditText) findViewById(R.id.selectLeavingTimeText);
+        selectTimeToStopText = (EditText) findViewById(R.id.selectTimeToStopText);
 
     }
 
@@ -55,6 +55,7 @@ public class MainActivity extends Activity {
     }
 
     public void selectBus(View view) {
+
     }
 
     public void selectLeavingTime(View view) {
