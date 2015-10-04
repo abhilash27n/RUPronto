@@ -136,8 +136,53 @@ public class MainActivity extends Activity {
 
         RequestQueue requestQueue = Volley.newRequestQueue(MainActivity.this);
         requestQueue.add(jsObjRequest);
+    }
 
+    public void getTiming(final String routeId, String stopId) {
 
+        //JSON Request to get buses and stops on app load
+        String url = "http://runextbus.herokuapp.com/stop/"+stopId;
+        Log.e("RUPronto", "Calling JSON getTiming for URL " + url);
+        JsonArrayRequest jsonArrayRequest = new JsonArrayRequest
+                (url, new Response.Listener<JSONArray>() {
+
+                    @Override
+                    public void onResponse(JSONArray response) {
+                        try {
+                            Log.e("RUPronto","Inside Response");
+                            //Log.e("RUPronto","I am testing this: "+titleJson.toString());
+                            for(int i=0;i<response.length();i++){
+                                String title = response.getJSONObject(i).get("title").toString();
+                                Log.e("RUPronto",title);
+                                if(title.equals(routeId)){
+                                    JSONArray predictionTimes = response.getJSONObject(i).getJSONArray("predictions");
+                                    for(int j=0;j<predictionTimes.length();j++){
+                                        //TODO - Array of minutes
+                                        String minutes = predictionTimes.getJSONObject(i).get("minutes").toString();
+                                        Log.e("RUPronto",minutes);
+                                    }
+                                    break;
+
+                                }
+                            }
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                        Log.e("RUPronto", response.toString());
+                    }
+                }, new Response.ErrorListener() {
+
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        // TODO Auto-generated method stub
+                        Log.e("RUPronto","Error JSON");
+
+                    }
+                });
+        Log.e("RUPronto", "JSON Complete");
+        RequestQueue requestQueue = Volley.newRequestQueue(MainActivity.this);
+        requestQueue.add(jsonArrayRequest);
     }
 
     private void populateStopsIdMapping() {
@@ -227,6 +272,8 @@ public class MainActivity extends Activity {
     }
 
     public void setReminder(View view) {
+
+        getTiming("Weekend 1","gibbons");
 
         NotificationCompat.Builder builder =
                 new NotificationCompat.Builder(this)
