@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
@@ -18,13 +19,10 @@ import android.widget.ArrayAdapter;
 
 public class MainActivity extends Activity {
 
-    Button selectBusStopText;
+    Spinner selectBusStopText;
     Spinner selectBusText;
     Button selectLeavingTimeText;
     Button selectTimeToStopText;
-
-
-
 
 
     @Override
@@ -33,17 +31,25 @@ public class MainActivity extends Activity {
         setContentView(R.layout.activity_main);
 
         //Initialize UI components
-        selectBusStopText = (Button) findViewById(R.id.selectBusStopText);
+        selectBusStopText = (Spinner) findViewById(R.id.selectBusStopText);
         selectBusText = (Spinner) findViewById(R.id.selectBusText);
         selectLeavingTimeText = (Button) findViewById(R.id.selectLeavingTimeText);
         selectTimeToStopText = (Button) findViewById(R.id.selectTimeToStopText);
-        Spinner dynamicSpinner = (Spinner) findViewById(R.id.selectBusText);
+        //Spinner dynamicSpinner = (Spinner) findViewById(R.id.selectBusText);
 
-        String[] items = new String[] { "Chai Latte", "Green Tea", "Black Tea" };
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
-                android.R.layout.simple_spinner_item, items);
+        String[] buses = new String[] { "A", "B", "LX" };
+        ArrayAdapter<String> _busAdapter = new ArrayAdapter<String>(this,
+                android.R.layout.simple_spinner_item,buses);
 
-        dynamicSpinner.setAdapter(adapter);
+        selectBusText.setAdapter(_busAdapter);
+
+
+        String[] stops = new String[] { "RSC", "Scott Hall", "Train Station" };
+        ArrayAdapter<String> _stopAdapter = new ArrayAdapter<String>(this,
+                android.R.layout.simple_spinner_item,stops);
+
+        selectBusStopText.setAdapter(_stopAdapter);
+
 
 
     }

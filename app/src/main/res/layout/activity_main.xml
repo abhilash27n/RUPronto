@@ -42,24 +42,13 @@
         android:layout_below="@+id/selectLeavingTimeText"
         android:layout_alignParentStart="true" />
 
-    <Button
-        android:layout_width="100dp"
-        android:layout_height="wrap_content"
-        android:id="@+id/selectBusStopText"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentEnd="true"
-        android:layout_toEndOf="@+id/leavingTimeText"
-        android:text="Please select..."
-        android:onClick="selectSource"/>
-
     <Spinner
         android:layout_width="200dp"
         android:layout_height="wrap_content"
         android:id="@+id/selectBusText"
         android:text="Please select..."
-        android:layout_below="@+id/selectBusStopText"
-        android:layout_alignEnd="@+id/selectTimeToStopText"
-        android:layout_toEndOf="@+id/leavingTimeText" />
+        android:layout_above="@+id/selectLeavingTimeText"
+        android:layout_alignParentEnd="true" />
 
     <Button
         android:layout_width="200dp"
@@ -69,8 +58,8 @@
         android:id="@+id/selectLeavingTimeText"
         android:text="Please select.."
         android:onClick="selectLeavingTime"
-        android:layout_below="@+id/selectBusText"
-        android:layout_alignEnd="@+id/selectBusText" />
+        android:layout_above="@+id/selectTimeToStopText"
+        android:layout_alignStart="@+id/selectTimeToStopText" />
 
     <Button
         android:layout_width= "200dp"
@@ -80,7 +69,7 @@
         android:id="@+id/selectTimeToStopText"
         android:text="choose one.."
         android:onClick="selectTimeToStop"
-        android:layout_below="@+id/selectLeavingTimeText"
+        android:layout_above="@+id/setButton"
         android:layout_alignParentEnd="true" />
 
     <Button
@@ -91,5 +80,15 @@
         android:onClick="setReminder"
         android:layout_centerVertical="true"
         android:layout_toEndOf="@+id/leavingTimeText" />
+
+    <Spinner
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/selectBusStopText"
+        android:spinnerMode="dropdown"
+        android:layout_above="@+id/selectBusText"
+        android:layout_toEndOf="@+id/leavingTimeText"
+        android:layout_alignStart="@+id/selectBusText"
+        android:clickable="true" />
 
 </RelativeLayout>
