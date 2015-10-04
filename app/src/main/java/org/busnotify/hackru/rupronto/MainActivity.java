@@ -46,7 +46,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 
 public class MainActivity extends Activity {
-
+    //Testcommit- Annie
     Spinner selectBusStopText;
     Spinner selectBusText;
     Button selectLeavingTimeText;
