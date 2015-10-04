@@ -54,6 +54,10 @@ public class MainActivity extends Activity {
     TextView fragmentHolder;
     HashMap<String,String> stopsIdMapping;
 
+    String selectedBus;
+    String selectedStop;
+    String busTiming;
+    String timeToStop;
 
     public void setBusesList(ArrayList<String> busesList) {
         //String[] buses = new String[] { "A", "B", "LX" };
@@ -231,6 +235,20 @@ public class MainActivity extends Activity {
                         .setContentText("Hello World!");
         NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
         notificationManager.notify(NOTIFICATION_ID, builder.build());
+
+        //Get the data from all the fields
+        selectedBus = selectBusText.getSelectedItem().toString();
+        Log.e("RUPRONTO", "The selected bus is: " + selectedBus);
+
+        selectedStop = selectBusStopText.getSelectedItem().toString();
+        Log.e("RUPRONTO", "The selected stop is: "+selectedStop);
+
+        busTiming = selectLeavingTimeText.getText().toString();
+        Log.e("RUPRONTO", "The time to catch bus is: "+busTiming);
+
+        timeToStop = selectTimeToStopText.getText().toString();
+        Log.e("RUPRONTO", "The time to bus stop is: "+ timeToStop);
+
     }
 
     public static class NumberPickerFragment extends DialogFragment{
@@ -276,7 +294,6 @@ public class MainActivity extends Activity {
             // create the dialog from the builder then show
             return builder.create();
         }
-
     }
 
     public static class TimePickerFragment extends DialogFragment implements TimePickerDialog.OnTimeSetListener{
@@ -293,8 +310,6 @@ public class MainActivity extends Activity {
             leaveTime = (Button) getActivity().findViewById(R.id.selectLeavingTimeText);
             fragmentHolder = (TextView) getActivity().findViewById(R.id.fragmentHolder);
 
-            Log.e("RUPRonto","Text "+fragmentHolder.getText());
-
             if(fragmentHolder.getText()=="") {
                 hour = c.get(Calendar.HOUR_OF_DAY);
                 minute = c.get(Calendar.MINUTE);
@@ -305,17 +320,9 @@ public class MainActivity extends Activity {
                 minute = Integer.parseInt(s.split(":")[1]);
             }
 
-            Log.e("RUPRonto","The hours and minutes:  "+hour+":"+minute);
-
-
             // Create a new instance of TimePickerDialog and return it
-            TimePickerDialog tpd =  new TimePickerDialog(getActivity(), this, hour, minute,
+            return new TimePickerDialog(getActivity(), this, hour, minute,
                     DateFormat.is24HourFormat(getActivity()));
-
-
-            return tpd;
-
-
         }
 
         public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
@@ -327,14 +334,6 @@ public class MainActivity extends Activity {
         }
 
 
-        @Override
-        public void onSaveInstanceState (Bundle outState){
-            super.onSaveInstanceState(outState);
-            Log.e("RUPRonto", "Saving the time");
-            outState.putSerializable("savedHour", hour);
-            outState.putSerializable("savedMinute", minute);
-
-        }
     }
 
 }
