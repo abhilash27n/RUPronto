@@ -47,20 +47,7 @@ public class MainActivity extends Activity {
         selectTimeToStopText = (Button) findViewById(R.id.selectTimeToStopText);
         //Spinner dynamicSpinner = (Spinner) findViewById(R.id.selectBusText);
 
-        String[] buses = new String[] { "A", "B", "LX" };
-        ArrayAdapter<String> _busAdapter = new ArrayAdapter<String>(this,
-                android.R.layout.simple_spinner_item,buses);
-
-        selectBusText.setAdapter(_busAdapter);
-
-
-        String[] stops = new String[] { "RSC", "Scott Hall", "Train Station" };
-        ArrayAdapter<String> _stopAdapter = new ArrayAdapter<String>(this,
-                android.R.layout.simple_spinner_item,stops);
-
-        selectBusStopText.setAdapter(_stopAdapter);
-
-
+        //JSON Request to get buses and stops on app load
         String url = "http://runextbus.herokuapp.com/active";
         Log.e("RUPronto","Calling JSON");
         JsonObjectRequest jsObjRequest = new JsonObjectRequest
@@ -83,6 +70,19 @@ public class MainActivity extends Activity {
 
         RequestQueue requestQueue = Volley.newRequestQueue(MainActivity.this);
         requestQueue.add(jsObjRequest);
+
+        String[] buses = new String[] { "A", "B", "LX" };
+        ArrayAdapter<String> _busAdapter = new ArrayAdapter<String>(this,
+                android.R.layout.simple_spinner_item,buses);
+
+        selectBusText.setAdapter(_busAdapter);
+
+
+        String[] stops = new String[] { "RSC", "Scott Hall", "Train Station" };
+        ArrayAdapter<String> _stopAdapter = new ArrayAdapter<String>(this,
+                android.R.layout.simple_spinner_item,stops);
+
+        selectBusStopText.setAdapter(_stopAdapter);
 
 
     }
