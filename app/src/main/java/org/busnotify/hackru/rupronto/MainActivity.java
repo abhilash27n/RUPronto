@@ -39,6 +39,8 @@ import com.android.volley.toolbox.Volley;
 import java.security.Timestamp;
 import java.util.Calendar;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
 
 public class MainActivity extends Activity {
 
@@ -47,6 +49,7 @@ public class MainActivity extends Activity {
     Button selectLeavingTimeText;
     Button selectTimeToStopText;
     TextView fragmentHolder;
+    HashMap<String,String> stopsIdMapping;
 
 
     public void setBusesList(ArrayList<String> busesList) {
@@ -70,6 +73,7 @@ public class MainActivity extends Activity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        populateStopsIdMapping();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
@@ -126,6 +130,51 @@ public class MainActivity extends Activity {
         RequestQueue requestQueue = Volley.newRequestQueue(MainActivity.this);
         requestQueue.add(jsObjRequest);
 
+
+    }
+
+    private void populateStopsIdMapping() {
+        stopsIdMapping = new HashMap<String,String>();
+        String url = "http://runextbus.herokuapp.com/config";
+
+        JsonObjectRequest jsObjRequest = new JsonObjectRequest
+                (Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
+
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        try {
+                            JSONObject stops = response.getJSONObject("stops");
+                            JSONArray stopsArray=stops.names();
+                            for(int i=0;i<stopsArray.length();i++){
+
+                                String id=stopsArray.getString(i);
+                                String title = stops.getJSONObject(id).getString("title");
+
+                                stopsIdMapping.put(id,title);
+
+                            }
+
+
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+
+                    }
+                }, new Response.ErrorListener() {
+
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        // TODO Auto-generated method stub
+                        Log.e("RUPronto","Error JSON");
+
+                    }
+                });
+
+
+        RequestQueue requestQueue = Volley.newRequestQueue(MainActivity.this);
+        requestQueue.add(jsObjRequest);
+        Log.e("RUPronto", "");
 
     }
 
@@ -225,31 +274,31 @@ public class MainActivity extends Activity {
 
             // Create a new instance of TimePickerDialog and return it
             TimePickerDialog tpd =  new TimePickerDialog(getActivity(), this, hour, minute,
-                        DateFormat.is24HourFormat(getActivity()));
+                    DateFormat.is24HourFormat(getActivity()));
 
 
             return tpd;
 
 
-            }
-
-            public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-                // Do something with the time chosen by the user
-                Toast.makeText(getActivity(), "Time Selected: ", Toast.LENGTH_SHORT).show();
-                String s = String.valueOf(hourOfDay)+ " : " + String.valueOf(minute);
-                leaveTime.setText(s);
-                fragmentHolder.setText(""+hourOfDay+":"+minute);
-            }
-
-
-            @Override
-            public void onSaveInstanceState (Bundle outState){
-                super.onSaveInstanceState(outState);
-                Log.e("RUPRonto", "Saving the time");
-                outState.putSerializable("savedHour", hour);
-                outState.putSerializable("savedMinute", minute);
-
-            }
         }
+
+        public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+            // Do something with the time chosen by the user
+            Toast.makeText(getActivity(), "Time Selected: ", Toast.LENGTH_SHORT).show();
+            String s = String.valueOf(hourOfDay)+ " : " + String.valueOf(minute);
+            leaveTime.setText(s);
+            fragmentHolder.setText(""+hourOfDay+":"+minute);
+        }
+
+
+        @Override
+        public void onSaveInstanceState (Bundle outState){
+            super.onSaveInstanceState(outState);
+            Log.e("RUPRonto", "Saving the time");
+            outState.putSerializable("savedHour", hour);
+            outState.putSerializable("savedMinute", minute);
+
+        }
+    }
 
 }
