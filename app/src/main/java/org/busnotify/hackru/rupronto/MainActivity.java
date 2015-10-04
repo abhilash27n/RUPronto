@@ -16,6 +16,16 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.ArrayAdapter;
 
+import org.json.JSONObject;
+
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonArrayRequest;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
+
 
 public class MainActivity extends Activity {
 
@@ -50,6 +60,29 @@ public class MainActivity extends Activity {
 
         selectBusStopText.setAdapter(_stopAdapter);
 
+
+        String url = "http://runextbus.herokuapp.com/active";
+        Log.e("RUPronto","Calling JSON");
+        JsonObjectRequest jsObjRequest = new JsonObjectRequest
+                (Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
+
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        Log.e("RUPronto", response.toString());
+                    }
+                }, new Response.ErrorListener() {
+
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        // TODO Auto-generated method stub
+                        Log.e("RUPronto","Error JSON");
+
+                    }
+                });
+        Log.e("RUPronto","JSON Complete");
+
+        RequestQueue requestQueue = Volley.newRequestQueue(MainActivity.this);
+        requestQueue.add(jsObjRequest);
 
 
     }
@@ -101,6 +134,5 @@ public class MainActivity extends Activity {
 
     public void setReminder(View view) {
     }
-
 
 }
