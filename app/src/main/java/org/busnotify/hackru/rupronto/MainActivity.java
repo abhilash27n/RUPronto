@@ -87,10 +87,12 @@ public class MainActivity extends Activity {
                             ArrayList<String> buses = new ArrayList<>();
                             ArrayList<String> stops = new ArrayList<>();
                             for(int i=0;i<busesJson.length();i++){
-                                buses.add(busesJson.get(i).toString());
+                                String bus = busesJson.getJSONObject(i).get("title").toString();
+                                buses.add(bus);
                             }
                             for(int i=0;i<stopsJson.length();i++){
-                                stops.add(stopsJson.get(i).toString());
+                                String stop = stopsJson.getJSONObject(i).get("title").toString();
+                                stops.add(stop);
                             }
 
                             setBusesList(buses);
