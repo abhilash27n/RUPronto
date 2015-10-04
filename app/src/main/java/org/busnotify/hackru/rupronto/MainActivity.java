@@ -2,10 +2,14 @@ package org.busnotify.hackru.rupronto;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.Dialog;
+import android.app.DialogFragment;
+import android.app.TimePickerDialog;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.text.format.DateFormat;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 import android.view.Menu;
@@ -17,6 +21,8 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.ArrayAdapter;
+import android.widget.TimePicker;
+import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -30,8 +36,9 @@ import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 
+import java.security.Timestamp;
+import java.util.Calendar;
 import java.util.ArrayList;
-
 
 public class MainActivity extends Activity {
 
@@ -39,7 +46,7 @@ public class MainActivity extends Activity {
     Spinner selectBusText;
     Button selectLeavingTimeText;
     Button selectTimeToStopText;
-    ArrayList<String> stopsList = new ArrayList<>();
+    TextView fragmentHolder;
 
 
     public void setBusesList(ArrayList<String> busesList) {
@@ -71,9 +78,8 @@ public class MainActivity extends Activity {
         selectBusText = (Spinner) findViewById(R.id.selectBusText);
         selectLeavingTimeText = (Button) findViewById(R.id.selectLeavingTimeText);
         selectTimeToStopText = (Button) findViewById(R.id.selectTimeToStopText);
+        fragmentHolder = (TextView) findViewById(R.id.fragmentHolder);
         //Spinner dynamicSpinner = (Spinner) findViewById(R.id.selectBusText);
-
-
 
         //JSON Request to get buses and stops on app load
         String url = "http://runextbus.herokuapp.com/active";
@@ -152,6 +158,11 @@ public class MainActivity extends Activity {
     }
 
     public void selectLeavingTime(View view) {
+
+        DialogFragment timePickerFragment = new TimePickerFragment();
+        timePickerFragment.show(getFragmentManager(), "SELECT TIME");
+
+
     }
 
     public void selectTimeToStop(View view) {
@@ -167,5 +178,78 @@ public class MainActivity extends Activity {
         NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
         notificationManager.notify(NOTIFICATION_ID, builder.build());
     }
+
+
+    public static class TimePickerFragment extends DialogFragment implements TimePickerDialog.OnTimeSetListener{
+
+        String savedHour;
+        String savedMinute;
+        int hour;
+        int minute;
+        Button leaveTime;
+        TextView fragmentHolder;
+        @Override
+        public Dialog onCreateDialog(Bundle savedInstanceState) {
+            // Use the current time as the default values for the picker
+            final Calendar c = Calendar.getInstance();
+
+
+
+            leaveTime = (Button) getActivity().findViewById(R.id.selectLeavingTimeText);
+            fragmentHolder = (TextView) getActivity().findViewById(R.id.fragmentHolder);
+
+            Log.e("RUPRonto","Text "+fragmentHolder.getText());
+
+            if(fragmentHolder.getText()=="") {
+                hour = c.get(Calendar.HOUR_OF_DAY);
+                minute = c.get(Calendar.MINUTE);
+            }
+            else {
+                String s = fragmentHolder.getText().toString();
+                hour = Integer.parseInt(s.split(":")[0]);
+                minute = Integer.parseInt(s.split(":")[1]);
+            }
+
+            Log.e("RUPRonto","The hours and minutes:  "+hour+":"+minute);
+
+
+//            if((savedInstanceState != null)&&(savedInstanceState.getSerializable("savedHour")!=null)){
+//
+//                hour = (Integer)savedInstanceState.getSerializable("savedHour");
+//                minute = (Integer)savedInstanceState.get("savedMinute");
+//                Log.e("RUPRonto", "The time set is: " + savedHour + " :" + savedMinute);
+//                //hour = Integer.parseInt(savedHour);
+//                //minute = Integer.parseInt(savedMinute);
+//            }
+            //Log.e("RUPRonto", " No time previously set");
+
+            // Create a new instance of TimePickerDialog and return it
+            TimePickerDialog tpd =  new TimePickerDialog(getActivity(), this, hour, minute,
+                        DateFormat.is24HourFormat(getActivity()));
+
+
+            return tpd;
+
+
+            }
+
+            public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+                // Do something with the time chosen by the user
+                Toast.makeText(getActivity(), "Time Selected: ", Toast.LENGTH_SHORT).show();
+                String s = String.valueOf(hourOfDay)+ " : " + String.valueOf(minute);
+                leaveTime.setText(s);
+                fragmentHolder.setText(""+hourOfDay+":"+minute);
+            }
+
+
+            @Override
+            public void onSaveInstanceState (Bundle outState){
+                super.onSaveInstanceState(outState);
+                Log.e("RUPRonto", "Saving the time");
+                outState.putSerializable("savedHour", hour);
+                outState.putSerializable("savedMinute", minute);
+
+            }
+        }
 
 }

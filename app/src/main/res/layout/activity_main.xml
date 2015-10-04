@@ -30,7 +30,7 @@
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:text="Leaving Time"
         android:id="@+id/leavingTimeText"
-        android:layout_below="@+id/selectBusText"
+        android:layout_alignTop="@+id/selectLeavingTimeText"
         android:layout_alignParentStart="true" />
 
     <TextView
@@ -39,38 +39,42 @@
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:text="Time to Stop"
         android:id="@+id/timeToStopText"
-        android:layout_below="@+id/selectLeavingTimeText"
-        android:layout_alignParentStart="true" />
+        android:layout_alignTop="@+id/selectTimeToStopText"
+        android:layout_toStartOf="@+id/setButton" />
 
     <Spinner
+        android:scrollbarSize="30dp"
         android:layout_width="200dp"
-        android:layout_height="wrap_content"
+        android:layout_height="50dp"
         android:id="@+id/selectBusText"
         android:text="Please select..."
-        android:layout_above="@+id/selectLeavingTimeText"
-        android:layout_alignParentEnd="true" />
+        android:layout_below="@+id/selectBusStopText"
+        android:layout_alignParentEnd="true"
+        android:layout_alignStart="@+id/selectBusStopText" />
 
     <Button
         android:layout_width="200dp"
-        android:layout_height="wrap_content"
+        android:layout_height="35dp"
         android:inputType="time"
         android:ems="10"
         android:id="@+id/selectLeavingTimeText"
         android:text="Please select.."
         android:onClick="selectLeavingTime"
-        android:layout_above="@+id/selectTimeToStopText"
-        android:layout_alignStart="@+id/selectTimeToStopText" />
+        android:layout_below="@+id/selectBusText"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="41dp" />
 
     <Button
         android:layout_width= "200dp"
-        android:layout_height="wrap_content"
+        android:layout_height="35dp"
         android:inputType="time"
         android:ems="10"
         android:id="@+id/selectTimeToStopText"
         android:text="choose one.."
         android:onClick="selectTimeToStop"
-        android:layout_above="@+id/setButton"
-        android:layout_alignParentEnd="true" />
+        android:layout_below="@+id/selectLeavingTimeText"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="47dp" />
 
     <Button
         android:layout_width="wrap_content"
@@ -78,17 +82,25 @@
         android:text="Set reminder"
         android:id="@+id/setButton"
         android:onClick="setReminder"
-        android:layout_centerVertical="true"
+        android:layout_marginBottom="59dp"
+        android:layout_alignParentBottom="true"
         android:layout_toEndOf="@+id/leavingTimeText" />
 
     <Spinner
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="200dp"
+        android:layout_height="50dp"
         android:id="@+id/selectBusStopText"
         android:spinnerMode="dropdown"
-        android:layout_above="@+id/selectBusText"
+        android:clickable="true"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
         android:layout_toEndOf="@+id/leavingTimeText"
-        android:layout_alignStart="@+id/selectBusText"
-        android:clickable="true" />
+        android:layout_alignStart="@+id/selectLeavingTimeText" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/fragmentHolder"
+        android:visibility="invisible"/>
 
 </RelativeLayout>
