@@ -12,8 +12,8 @@
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:text="Bus Stop"
         android:id="@+id/busStopText"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentStart="true" />
+        android:layout_below="@+id/fragmentHolder"
+        android:layout_alignEnd="@+id/busText" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -21,8 +21,8 @@
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:text="Bus"
         android:id="@+id/busText"
-        android:layout_alignTop="@+id/selectBusText"
-        android:layout_alignParentStart="true" />
+        android:layout_alignBottom="@+id/selectBusText"
+        android:layout_alignEnd="@+id/leavingTimeText" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -49,8 +49,7 @@
         android:id="@+id/selectBusText"
         android:text="Please select..."
         android:layout_below="@+id/selectBusStopText"
-        android:layout_alignParentEnd="true"
-        android:layout_alignStart="@+id/selectBusStopText" />
+        android:layout_alignParentEnd="true" />
 
     <Button
         android:layout_width="200dp"
