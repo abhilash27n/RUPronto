@@ -149,7 +149,7 @@ public class MainActivity extends Activity {
                     @Override
                     public void onResponse(JSONArray response) {
                         try {
-                            Log.e("RUPronto","Inside Response");
+                            Log.e("RUPronto", "Inside Response");
                             //Log.e("RUPronto","I am testing this: "+titleJson.toString());
                             for(int i=0;i<response.length();i++){
                                 String title = response.getJSONObject(i).get("title").toString();
@@ -206,8 +206,6 @@ public class MainActivity extends Activity {
 
                             }
 
-
-
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
@@ -223,10 +221,8 @@ public class MainActivity extends Activity {
                     }
                 });
 
-
         RequestQueue requestQueue = Volley.newRequestQueue(MainActivity.this);
         requestQueue.add(jsObjRequest);
-        Log.e("RUPronto", "");
 
     }
 
@@ -273,7 +269,7 @@ public class MainActivity extends Activity {
 
     public void setReminder(View view) {
 
-        getTiming("Weekend 1","gibbons");
+        getTiming("Weekend 2","scott");
 
         NotificationCompat.Builder builder =
                 new NotificationCompat.Builder(this)
@@ -284,17 +280,26 @@ public class MainActivity extends Activity {
         notificationManager.notify(NOTIFICATION_ID, builder.build());
 
         //Get the data from all the fields
-        selectedBus = selectBusText.getSelectedItem().toString();
-        Log.e("RUPRONTO", "The selected bus is: " + selectedBus);
+        if(selectBusText!=null) {
+            selectedBus = selectBusText.getSelectedItem().toString();
+            Log.e("RUPRONTO", "The selected bus is: " + selectedBus);
+        }
 
-        selectedStop = selectBusStopText.getSelectedItem().toString();
-        Log.e("RUPRONTO", "The selected stop is: "+selectedStop);
+        if(selectBusStopText!=null) {
+            selectedStop = selectBusStopText.getSelectedItem().toString();
+            Log.e("RUPRONTO", "The selected stop is: " + selectedStop);
+        }
 
-        busTiming = selectLeavingTimeText.getText().toString();
-        Log.e("RUPRONTO", "The time to catch bus is: "+busTiming);
+        if(selectLeavingTimeText!=null) {
+            busTiming = selectLeavingTimeText.getText().toString();
+            Log.e("RUPRONTO", "The time to catch bus is: " + busTiming);
+        }
 
-        timeToStop = selectTimeToStopText.getText().toString();
-        Log.e("RUPRONTO", "The time to bus stop is: "+ timeToStop);
+        if(selectTimeToStopText!=null) {
+            timeToStop = selectTimeToStopText.getText().toString();
+            Log.e("RUPRONTO", "The time to bus stop is: " + timeToStop);
+        }
+
 
     }
 
