@@ -16,6 +16,8 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.ArrayAdapter;
 
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.android.volley.Request;
@@ -26,6 +28,8 @@ import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 
+import java.util.ArrayList;
+
 
 public class MainActivity extends Activity {
 
@@ -33,6 +37,25 @@ public class MainActivity extends Activity {
     Spinner selectBusText;
     Button selectLeavingTimeText;
     Button selectTimeToStopText;
+    ArrayList<String> stopsList = new ArrayList<>();
+
+
+    public void setBusesList(ArrayList<String> busesList) {
+        //String[] buses = new String[] { "A", "B", "LX" };
+        ArrayAdapter<String> _busAdapter = new ArrayAdapter<String>(this,
+                android.R.layout.simple_spinner_item,busesList);
+
+        selectBusText.setAdapter(_busAdapter);
+    }
+
+    public void setStopsList(ArrayList<String> stopsList) {
+        //String[] stops = new String[] { "RSC", "Scott Hall", "Train Station" };
+        ArrayAdapter<String> _stopAdapter = new ArrayAdapter<String>(this,
+                android.R.layout.simple_spinner_item,stopsList);
+
+        selectBusStopText.setAdapter(_stopAdapter);
+    }
+
 
 
     @Override
@@ -47,6 +70,8 @@ public class MainActivity extends Activity {
         selectTimeToStopText = (Button) findViewById(R.id.selectTimeToStopText);
         //Spinner dynamicSpinner = (Spinner) findViewById(R.id.selectBusText);
 
+
+
         //JSON Request to get buses and stops on app load
         String url = "http://runextbus.herokuapp.com/active";
         Log.e("RUPronto","Calling JSON");
@@ -55,6 +80,25 @@ public class MainActivity extends Activity {
 
                     @Override
                     public void onResponse(JSONObject response) {
+                        try {
+                            JSONArray busesJson = response.getJSONArray("routes");
+                            JSONArray stopsJson = response.getJSONArray("stops");
+                            Log.e("RUPronto-JSON",busesJson.toString());
+                            ArrayList<String> buses = new ArrayList<>();
+                            ArrayList<String> stops = new ArrayList<>();
+                            for(int i=0;i<busesJson.length();i++){
+                                buses.add(busesJson.get(i).toString());
+                            }
+                            for(int i=0;i<stopsJson.length();i++){
+                                stops.add(stopsJson.get(i).toString());
+                            }
+
+                            setBusesList(buses);
+                            setStopsList(stops);
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
                         Log.e("RUPronto", response.toString());
                     }
                 }, new Response.ErrorListener() {
@@ -66,23 +110,10 @@ public class MainActivity extends Activity {
 
                     }
                 });
-        Log.e("RUPronto","JSON Complete");
+        Log.e("RUPronto", "JSON Complete");
 
         RequestQueue requestQueue = Volley.newRequestQueue(MainActivity.this);
         requestQueue.add(jsObjRequest);
-
-        String[] buses = new String[] { "A", "B", "LX" };
-        ArrayAdapter<String> _busAdapter = new ArrayAdapter<String>(this,
-                android.R.layout.simple_spinner_item,buses);
-
-        selectBusText.setAdapter(_busAdapter);
-
-
-        String[] stops = new String[] { "RSC", "Scott Hall", "Train Station" };
-        ArrayAdapter<String> _stopAdapter = new ArrayAdapter<String>(this,
-                android.R.layout.simple_spinner_item,stops);
-
-        selectBusStopText.setAdapter(_stopAdapter);
 
 
     }
@@ -113,17 +144,6 @@ public class MainActivity extends Activity {
     }
 
     public void selectBus(View view) {
-        Log.e("RUPRONTO", "Selecting bus...");
-        CharSequence[] bus = {"LX","Wknd1"};
-        AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-        builder.setTitle(R.string.bus)
-                .setItems(bus, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        // The 'which' argument contains the index position
-                        // of the selected item
-                    }
-                });
-        builder.show();
     }
 
     public void selectLeavingTime(View view) {
