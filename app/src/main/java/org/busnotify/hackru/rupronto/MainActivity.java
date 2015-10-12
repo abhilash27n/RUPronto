@@ -54,6 +54,8 @@ public class MainActivity extends Activity {
     TextView fragmentHolder;
     HashMap<String,String> stopsIdMapping;
 
+    ArrayList<Integer> minutesList;
+
     String selectedBus;
     String selectedStop;
     String busTiming;
@@ -136,6 +138,8 @@ public class MainActivity extends Activity {
 
         RequestQueue requestQueue = Volley.newRequestQueue(MainActivity.this);
         requestQueue.add(jsObjRequest);
+
+        minutesList = new ArrayList<Integer>();
     }
 
     public void getTiming(final String routeId, String stopId) {
@@ -159,10 +163,10 @@ public class MainActivity extends Activity {
                                     for(int j=0;j<predictionTimes.length();j++){
                                         //TODO - Array of minutes
                                         String minutes = predictionTimes.getJSONObject(j).get("minutes").toString();
-                                        Log.e("RUPronto",minutes);
+                                        //Log.e("RUPronto",minutes);
+                                        minutesList.add(Integer.parseInt(minutes));
                                     }
                                     break;
-
                                 }
                             }
 
@@ -269,16 +273,6 @@ public class MainActivity extends Activity {
 
     public void setReminder(View view) {
 
-        getTiming("Weekend 2","scott");
-
-        NotificationCompat.Builder builder =
-                new NotificationCompat.Builder(this)
-                        .setSmallIcon(R.drawable.ic_launcher)
-                        .setContentTitle("My notification")
-                        .setContentText("Hello World!");
-        NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-        notificationManager.notify(NOTIFICATION_ID, builder.build());
-
         //Get the data from all the fields
         if(selectBusText!=null) {
             selectedBus = selectBusText.getSelectedItem().toString();
@@ -299,6 +293,20 @@ public class MainActivity extends Activity {
             timeToStop = selectTimeToStopText.getText().toString();
             Log.e("RUPRONTO", "The time to bus stop is: " + timeToStop);
         }
+
+        Log.e("RUPRONTO", "Before Calling getTiming()"+selectedBus );
+        Log.e("RUPRONTO", "Before Calling getTiming()" + selectedStop);
+
+        getTiming("Weekend 2", stopsIdMapping.get(selectedStop));
+
+        NotificationCompat.Builder builder =
+                new NotificationCompat.Builder(this)
+                        .setSmallIcon(R.drawable.ic_launcher)
+                        .setContentTitle("My notification")
+                        .setContentText("Hello World!");
+        NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+        notificationManager.notify(NOTIFICATION_ID, builder.build());
+
 
 
     }
