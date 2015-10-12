@@ -61,6 +61,9 @@ public class MainActivity extends Activity {
     String busTiming;
     String timeToStop;
 
+    /*
+    set Buses List to display on UI
+     */
     public void setBusesList(ArrayList<String> busesList) {
         //String[] buses = new String[] { "A", "B", "LX" };
         ArrayAdapter<String> _busAdapter = new ArrayAdapter<String>(this,
@@ -69,6 +72,9 @@ public class MainActivity extends Activity {
         selectBusText.setAdapter(_busAdapter);
     }
 
+    /*
+    set Stops list to display on UI
+     */
     public void setStopsList(ArrayList<String> stopsList) {
         //String[] stops = new String[] { "RSC", "Scott Hall", "Train Station" };
         ArrayAdapter<String> _stopAdapter = new ArrayAdapter<String>(this,
@@ -142,6 +148,9 @@ public class MainActivity extends Activity {
         minutesList = new ArrayList<Integer>();
     }
 
+    /*
+    get arrival Timings for the selected route and stop id
+     */
     public void getTiming(final String routeId, String stopId) {
 
         //JSON Request to get buses and stops on app load
@@ -189,6 +198,9 @@ public class MainActivity extends Activity {
         requestQueue.add(jsonArrayRequest);
     }
 
+    /*
+     populate HashMap with stops and stopsId
+     */
     private void populateStopsIdMapping() {
         stopsIdMapping = new HashMap<String,String>();
         String url = "http://runextbus.herokuapp.com/config";
@@ -252,18 +264,18 @@ public class MainActivity extends Activity {
         return super.onOptionsItemSelected(item);
     }
 
-    public void selectSource(View view) {
-    }
-
-    public void selectBus(View view) {
-    }
-
+    /*
+    select time that you plan to leave from the bus stop
+     */
     public void selectLeavingTime(View view) {
 
         DialogFragment timePickerFragment = new TimePickerFragment();
         timePickerFragment.show(getFragmentManager(), "SELECT TIME");
     }
 
+    /*
+    select how long it takes for you to walk to your stop
+     */
     public void selectTimeToStop(View view) {
 
         NumberPickerFragment numberPickerFragment = new NumberPickerFragment();
@@ -271,6 +283,9 @@ public class MainActivity extends Activity {
 
     }
 
+    /*
+    set reminder called upon set reminder button click to set reminder
+     */
     public void setReminder(View view) {
 
         //Get the data from all the fields
@@ -311,6 +326,9 @@ public class MainActivity extends Activity {
 
     }
 
+    /*
+    Time to stop selection
+     */
     public static class NumberPickerFragment extends DialogFragment{
 
         Context context;
@@ -356,6 +374,9 @@ public class MainActivity extends Activity {
         }
     }
 
+    /*
+    Leaving time selection
+     */
     public static class TimePickerFragment extends DialogFragment implements TimePickerDialog.OnTimeSetListener{
 
         int hour;
@@ -385,6 +406,9 @@ public class MainActivity extends Activity {
                     DateFormat.is24HourFormat(getActivity()));
         }
 
+        /*
+        what happens on time set
+         */
         public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
             // Do something with the time chosen by the user
             Toast.makeText(getActivity(), "Time Selected: ", Toast.LENGTH_SHORT).show();
