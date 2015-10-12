@@ -216,7 +216,7 @@ public class MainActivity extends Activity {
                                 String id=stopsArray.getString(i);
                                 String title = stops.getJSONObject(id).getString("title");
 
-                                stopsIdMapping.put(id,title);
+                                stopsIdMapping.put(title, id);
 
                             }
 
@@ -310,7 +310,7 @@ public class MainActivity extends Activity {
         Log.e("RUPRONTO", "Before Calling getTiming()"+selectedBus );
         Log.e("RUPRONTO", "Before Calling getTiming()" + selectedStop);
 
-        getTiming("Weekend 2", stopsIdMapping.get(selectedStop));
+        getTiming(selectedBus, stopsIdMapping.get(selectedStop));
 
         NotificationCompat.Builder builder =
                 new NotificationCompat.Builder(this)
