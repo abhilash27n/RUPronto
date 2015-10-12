@@ -9,7 +9,6 @@ import android.app.NotificationManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
-import android.text.format.DateFormat;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 import android.view.Gravity;
@@ -40,8 +39,13 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 
 import java.security.Timestamp;
+import java.sql.Time;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.text.DateFormat;
 import java.util.Calendar;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 
@@ -286,31 +290,46 @@ public class MainActivity extends Activity {
      */
     public void setReminder(View view) {
 
+        Log.e("RUPronto","ENTERING SET REMINDER");
         //Get the data from all the fields
         if(selectBusText!=null) {
             selectedBus = selectBusText.getSelectedItem().toString();
-            Log.e("RUPRONTO", "The selected bus is: " + selectedBus);
+            Log.e("RUPronto", "The selected bus is: " + selectedBus);
         }
 
         if(selectBusStopText!=null) {
             selectedStop = selectBusStopText.getSelectedItem().toString();
-            Log.e("RUPRONTO", "The selected stop is: " + selectedStop);
+            Log.e("RUPronto", "The selected stop is: " + selectedStop);
         }
 
         if(selectLeavingTimeText!=null) {
             busTiming = selectLeavingTimeText.getText().toString();
-            Log.e("RUPRONTO", "The time to catch bus is: " + busTiming);
+            Log.e("RUPronto", "The time to catch bus is: " + busTiming);
         }
 
         if(selectTimeToStopText!=null) {
             timeToStop = selectTimeToStopText.getText().toString();
-            Log.e("RUPRONTO", "The time to bus stop is: " + timeToStop);
+            Log.e("RUPronto", "The time to bus stop is: " + timeToStop);
         }
 
-        Log.e("RUPRONTO", "Before Calling getTiming()"+selectedBus );
-        Log.e("RUPRONTO", "Before Calling getTiming()" + selectedStop);
-
         getTiming(selectedBus, stopsIdMapping.get(selectedStop));
+
+        DateFormat sdf = new SimpleDateFormat("HH:mm");
+        try {
+            Date date = sdf.parse(busTiming);
+            String currentDate = sdf.format(new Date());
+            Date currDate = sdf.parse(currentDate);
+            long minDiff = (date.getTime() - currDate.getTime())/(60*1000);
+            Log.e("RUPronto","Time diff between selected time and current time in min is: "+date.toString()+" "+currentDate.toString()+" "+minDiff);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        //Iterate through time and select closest time to departure to select which bus I want
+        for(int i = 0; i < minutesList.size(); i++){
+            Log.e("RUPRonto","Looping through minutes"+minutesList.get(i));
+
+
+        }
 
         NotificationCompat.Builder builder =
                 new NotificationCompat.Builder(this)
@@ -344,7 +363,7 @@ public class MainActivity extends Activity {
             numberPicker.setMinValue(1);
 
             timeToStop = (Button) getActivity().findViewById(R.id.selectTimeToStopText);
-            Log.e("RUPRONTO", timeToStop.getText().toString());
+            Log.e("RUPronto", timeToStop.getText().toString());
 
             if(!timeToStop.getText().toString().equals("choose one.."))
             {
@@ -401,7 +420,7 @@ public class MainActivity extends Activity {
 
             // Create a new instance of TimePickerDialog and return it
             return new TimePickerDialog(getActivity(), this, hour, minute,
-                    DateFormat.is24HourFormat(getActivity()));
+                    android.text.format.DateFormat.is24HourFormat(getActivity()));
         }
 
         /*
@@ -410,7 +429,7 @@ public class MainActivity extends Activity {
         public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
             // Do something with the time chosen by the user
             Toast.makeText(getActivity(), "Time Selected: ", Toast.LENGTH_SHORT).show();
-            String s = String.valueOf(hourOfDay)+ " : " + String.valueOf(minute);
+            String s = String.valueOf(hourOfDay)+ ":" + String.valueOf(minute);
             leaveTime.setText(s);
             fragmentHolder.setText(""+hourOfDay+":"+minute);
         }
