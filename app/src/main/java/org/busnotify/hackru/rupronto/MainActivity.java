@@ -158,7 +158,7 @@ public class MainActivity extends Activity {
                                     JSONArray predictionTimes = response.getJSONObject(i).getJSONArray("predictions");
                                     for(int j=0;j<predictionTimes.length();j++){
                                         //TODO - Array of minutes
-                                        String minutes = predictionTimes.getJSONObject(i).get("minutes").toString();
+                                        String minutes = predictionTimes.getJSONObject(j).get("minutes").toString();
                                         Log.e("RUPronto",minutes);
                                     }
                                     break;
