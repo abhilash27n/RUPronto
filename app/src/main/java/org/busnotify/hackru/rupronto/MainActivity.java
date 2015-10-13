@@ -4,8 +4,8 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
-import android.app.TimePickerDialog;
 import android.app.NotificationManager;
+import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
@@ -15,20 +15,14 @@ import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.NumberPicker;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.ArrayAdapter;
 import android.widget.TimePicker;
 import android.widget.Toast;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -38,19 +32,20 @@ import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 
-import java.security.Timestamp;
-import java.sql.Time;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.text.DateFormat;
-import java.util.Calendar;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
 
 public class MainActivity extends Activity {
-    //Testcommit- Annie
+
     Spinner selectBusStopText;
     Spinner selectBusText;
     Button selectLeavingTimeText;
@@ -58,8 +53,10 @@ public class MainActivity extends Activity {
     TextView fragmentHolder;
     HashMap<String,String> stopsIdMapping;
 
+    //stores list of minutes for select bus and stop combination
     ArrayList<Integer> minutesList;
 
+    //To get values on set reminder
     String selectedBus;
     String selectedStop;
     String busTiming;
@@ -92,7 +89,7 @@ public class MainActivity extends Activity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        populateStopsIdMapping();
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
@@ -103,6 +100,11 @@ public class MainActivity extends Activity {
         selectTimeToStopText = (Button) findViewById(R.id.selectTimeToStopText);
         fragmentHolder = (TextView) findViewById(R.id.fragmentHolder);
         //Spinner dynamicSpinner = (Spinner) findViewById(R.id.selectBusText);
+
+        //Initialize minutesList
+        minutesList = new ArrayList<Integer>();
+        //Initialize stops
+        populateStopsIdMapping();
 
         //JSON Request to get buses and stops on app load
         String url = "http://runextbus.herokuapp.com/active";
@@ -149,7 +151,7 @@ public class MainActivity extends Activity {
         RequestQueue requestQueue = Volley.newRequestQueue(MainActivity.this);
         requestQueue.add(jsObjRequest);
 
-        minutesList = new ArrayList<Integer>();
+
     }
 
     /*
@@ -176,6 +178,7 @@ public class MainActivity extends Activity {
                                     for(int j=0;j<predictionTimes.length();j++){
                                         String minutes = predictionTimes.getJSONObject(j).get("minutes").toString();
                                         minutesList.add(Integer.parseInt(minutes));
+                                        Log.e("RUPronto","Adding minutes"+minutes);
                                     }
                                     break;
                                 }
@@ -326,7 +329,7 @@ public class MainActivity extends Activity {
         }
         //Iterate through time and select closest time to departure to select which bus I want
         for(int i = 0; i < minutesList.size(); i++){
-            Log.e("RUPRonto","Looping through minutes"+minutesList.get(i));
+            Log.e("RUPronto","Looping through minutes"+minutesList.get(i));
 
 
         }
