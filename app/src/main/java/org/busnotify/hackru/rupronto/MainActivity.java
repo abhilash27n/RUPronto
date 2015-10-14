@@ -41,6 +41,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 
@@ -304,14 +305,27 @@ public class MainActivity extends Activity {
     set reminder called upon set reminder button click to set reminder
      */
     public void setReminder() {
-
+        Log.e("RUPronto","Entering setReminder with value: "+busTiming.toString());
         DateFormat sdf = new SimpleDateFormat("HH:mm");
         try {
             Date date = sdf.parse(busTiming);
             String currentDate = sdf.format(new Date());
             Date currDate = sdf.parse(currentDate);
-            long minDiff = (date.getTime() - currDate.getTime())/(60*1000);
-            Log.e("RUPronto","Time diff between selected time and current time in min is: "+date.toString()+" "+currentDate.toString()+" "+minDiff);
+            long minDiff = (date.getTime() - currDate.getTime()) / (60 * 1000);
+
+            // Finding minimum difference using extra storage.. Urgh!
+            ArrayList<Integer> minDiffList = new ArrayList<Integer>();
+            for (int i = 0; i < minutesList.size(); i++) {
+                int dist = minutesList.get(i) - (int)minDiff;
+                if (dist > 0)
+                    minDiffList.add(dist);
+            }
+
+            int reminderMinutes = Collections.min(minDiffList);
+            //TODO: Invoke timer here for reminder saying that there is a bus in (Time to Stop) minutes
+
+            Log.e("RUPronto", "Time diff between selected time and current time in min is: " + date.toString() + " " + currentDate.toString() + " " + minDiff);
+            Log.e("RUPronto", "The reminder time: "+reminderMinutes);
         } catch (ParseException e) {
             e.printStackTrace();
         }
