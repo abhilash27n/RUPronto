@@ -8,7 +8,10 @@ import android.app.NotificationManager;
 import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.media.RingtoneManager;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 import android.view.Gravity;
@@ -36,12 +39,12 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 
@@ -306,21 +309,20 @@ public class MainActivity extends Activity {
     set reminder called upon set reminder button click to set reminder
      */
     public void setReminder() {
-        int selectedTimeToBus = 0;
-        int timeToTimer = 0;
+        int selectedTimeToBus;
+        int timeToTimer;
         long minDiff = 0;
-        Log.e("RUPronto","Entering setReminder with value: "+busTiming.toString());
+        Log.e("RUPronto","Entering setReminder with value: "+busTiming);
         DateFormat sdf = new SimpleDateFormat("HH:mm");
         try {
             Date date = sdf.parse(busTiming);
             String currentDate = sdf.format(new Date());
             Date currDate = sdf.parse(currentDate);
             minDiff = (date.getTime() - currDate.getTime()) / (60 * 1000);
-            Log.e("RUPronto", "Time diff between selected time and current time in min is: " + date.toString() + " " + currentDate.toString() + " " + minDiff);
+            Log.e("RUPronto", "Time diff between selected time and current time in min is: " + date.toString() + " " + currDate.toString() + " " + minDiff);
         } catch (ParseException e) {
             e.printStackTrace();
         }
-
 
         // Finding minimum difference using extra storage.. Urgh!   --SORRY I am commenting this(need to return which bus I want to select)
             /*ArrayList<Integer> minDiffList = new ArrayList<Integer>();
@@ -342,24 +344,47 @@ public class MainActivity extends Activity {
         }
         Log.e("RUPronto", "The bus to catch is: "+selectedTimeToBus);
         timeToTimer = selectedTimeToBus - Integer.parseInt(timeToStop);
-        Log.e("RUPronto", "Leave house in:" + timeToStop);
-
-        //TODO: Invoke timer here for reminder saying that there is a bus in (Time to Stop) minutes
+        Log.e("RUPronto", "Leave house in:" + timeToTimer);
 
 
+        final int finalTimeToTimer = timeToTimer;
+        new AlertDialog.Builder(MainActivity.this)
+                .setTitle("Set Reminder")
+                .setMessage("\""+selectedBus+"\" bus at "+selectedStop+" in "+selectedTimeToBus+" minutes. Do you want to be reminded in "+timeToTimer+" minutes?")
+                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        //Schedule function to be called in milliseconds
+                        Handler handler = new Handler();
 
+                        //notification generator
+                        Runnable runnable = new Runnable(){
+                            public void run() {
+                                Uri uri= RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+                                NotificationCompat.Builder builder =
+                                        new NotificationCompat.Builder(MainActivity.this)
+                                                .setSmallIcon(R.drawable.ic_launcher)
+                                                .setContentTitle("RUPronto!!")
+                                                .setSound(uri)
+                                                .setContentText("It is time to leave to catch that \""+selectedBus+"\" at "+selectedStop+".");
+                                NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+                                notificationManager.notify(NOTIFICATION_ID, builder.build());
+                            }
+                        };
 
-        NotificationCompat.Builder builder =
-                new NotificationCompat.Builder(this)
-                        .setSmallIcon(R.drawable.ic_launcher)
-                        .setContentTitle("My notification")
-                        .setContentText("Hello World!");
-        NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-        notificationManager.notify(NOTIFICATION_ID, builder.build());
+                        //set notication to be called at time
+                        handler.postDelayed(runnable, finalTimeToTimer *60000);
 
-
-
+                    }
+                })
+                .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        //do nothing
+                    }
+                })
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .show();
     }
+
 
     /*
     select time that you plan to leave from the bus stop
