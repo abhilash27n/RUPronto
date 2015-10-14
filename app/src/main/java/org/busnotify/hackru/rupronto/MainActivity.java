@@ -6,7 +6,6 @@ import android.app.Dialog;
 import android.app.DialogFragment;
 import android.app.NotificationManager;
 import android.app.TimePickerDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.media.RingtoneManager;
 import android.net.Uri;
@@ -39,7 +38,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -50,11 +48,13 @@ import java.util.HashMap;
 
 public class MainActivity extends Activity {
 
+    //UI Items
     Spinner selectBusStopText;
     Spinner selectBusText;
     Button selectLeavingTimeText;
     Button selectTimeToStopText;
     TextView fragmentHolder;
+    //Hashmap for sending request with stopId for selected stop
     HashMap<String,String> stopsIdMapping;
 
     //stores list of minutes for select bus and stop combination
@@ -80,7 +80,6 @@ public class MainActivity extends Activity {
         selectLeavingTimeText = (Button) findViewById(R.id.selectLeavingTimeText);
         selectTimeToStopText = (Button) findViewById(R.id.selectTimeToStopText);
         fragmentHolder = (TextView) findViewById(R.id.fragmentHolder);
-        //Spinner dynamicSpinner = (Spinner) findViewById(R.id.selectBusText);
 
         //Initialize minutesList
         minutesList = new ArrayList<Integer>();
@@ -109,30 +108,23 @@ public class MainActivity extends Activity {
                                 String stop = stopsJson.getJSONObject(i).get("title").toString();
                                 stops.add(stop);
                             }
-
                             setBusesList(buses);
                             setStopsList(stops);
-
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
                         Log.e("RUPronto", response.toString());
                     }
                 }, new Response.ErrorListener() {
-
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        // TODO Auto-generated method stub
                         Log.e("RUPronto","Error JSON");
-
                     }
                 });
         Log.e("RUPronto", "JSON Complete");
-
+        //Make request
         RequestQueue requestQueue = Volley.newRequestQueue(MainActivity.this);
         requestQueue.add(jsObjRequest);
-
-
     }
 
     /*
@@ -141,7 +133,7 @@ public class MainActivity extends Activity {
     private void populateStopsIdMapping() {
         stopsIdMapping = new HashMap<String,String>();
         String url = "http://runextbus.herokuapp.com/config";
-
+        //Request for all stops to create hashmap with stops and stopid as key and value
         JsonObjectRequest jsObjRequest = new JsonObjectRequest
                 (Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
 
@@ -151,32 +143,45 @@ public class MainActivity extends Activity {
                             JSONObject stops = response.getJSONObject("stops");
                             JSONArray stopsArray=stops.names();
                             for(int i=0;i<stopsArray.length();i++){
-
                                 String id=stopsArray.getString(i);
                                 String title = stops.getJSONObject(id).getString("title");
-
                                 stopsIdMapping.put(title, id);
-
                             }
-
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
-
                     }
                 }, new Response.ErrorListener() {
-
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        // TODO Auto-generated method stub
                         Log.e("RUPronto","Error JSON");
-
                     }
                 });
-
+        //Make request
         RequestQueue requestQueue = Volley.newRequestQueue(MainActivity.this);
         requestQueue.add(jsObjRequest);
+    }
 
+    /*
+   set Buses List to display on UI
+    */
+    public void setBusesList(ArrayList<String> busesList) {
+        //String[] buses = new String[] { "A", "B", "LX" };
+        ArrayAdapter<String> _busAdapter = new ArrayAdapter<String>(this,
+                android.R.layout.simple_spinner_item,busesList);
+
+        selectBusText.setAdapter(_busAdapter);
+    }
+
+    /*
+    set Stops list to display on UI
+     */
+    public void setStopsList(ArrayList<String> stopsList) {
+        //String[] stops = new String[] { "RSC", "Scott Hall", "Train Station" };
+        ArrayAdapter<String> _stopAdapter = new ArrayAdapter<String>(this,
+                android.R.layout.simple_spinner_item,stopsList);
+
+        selectBusStopText.setAdapter(_stopAdapter);
     }
 
     @Override
@@ -201,41 +206,22 @@ public class MainActivity extends Activity {
         return super.onOptionsItemSelected(item);
     }
 
-
-    /*
-    set Buses List to display on UI
-     */
-    public void setBusesList(ArrayList<String> busesList) {
-        //String[] buses = new String[] { "A", "B", "LX" };
-        ArrayAdapter<String> _busAdapter = new ArrayAdapter<String>(this,
-                android.R.layout.simple_spinner_item,busesList);
-
-        selectBusText.setAdapter(_busAdapter);
-    }
-
-    /*
-    set Stops list to display on UI
-     */
-    public void setStopsList(ArrayList<String> stopsList) {
-        //String[] stops = new String[] { "RSC", "Scott Hall", "Train Station" };
-        ArrayAdapter<String> _stopAdapter = new ArrayAdapter<String>(this,
-                android.R.layout.simple_spinner_item,stopsList);
-
-        selectBusStopText.setAdapter(_stopAdapter);
-    }
-
-
     /*
     get arrival Timings for the selected route and stop id, called upon set reminder because of async calling. setReminder() will be called once time field is set
      */
     public void getTiming(View view) {
 
         String stopId = null;
+        //to check if atleast one item is not selected
+        boolean noNullFlag = true;
         Log.e("RUPronto","Entering getTiming()");
         //Get the data from all the fields
         if(selectBusText!=null) {
             selectedBus = selectBusText.getSelectedItem().toString();
             Log.e("RUPronto", "The selected bus is: " + selectedBus);
+        }
+        else{
+            noNullFlag = false;
         }
 
         if(selectBusStopText!=null) {
@@ -243,18 +229,27 @@ public class MainActivity extends Activity {
             Log.e("RUPronto", "The selected stop is: " + selectedStop);
             stopId = stopsIdMapping.get(selectedStop);
         }
+        else{
+            noNullFlag = false;
+        }
 
-        if(selectLeavingTimeText!=null) {
+        if(!selectLeavingTimeText.getText().toString().equals("Select Time..")) {
             busTiming = selectLeavingTimeText.getText().toString();
             Log.e("RUPronto", "The time to catch bus is: " + busTiming);
         }
+        else{
+            noNullFlag = false;
+        }
 
-        if(selectTimeToStopText!=null) {
+        if(!selectTimeToStopText.getText().toString().equals("Select Minutes..")) {
             timeToStop = selectTimeToStopText.getText().toString();
             Log.e("RUPronto", "The time to bus stop is: " + timeToStop);
         }
+        else{
+            noNullFlag = false;
+        }
 
-        if(stopId != null) {
+        if(stopId != null && noNullFlag) {
             //JSON Request to get buses and stops on app load
             String url = "http://runextbus.herokuapp.com/stop/" + stopId;
             Log.e("RUPronto", "Calling JSON getTiming for URL " + url);
@@ -265,7 +260,6 @@ public class MainActivity extends Activity {
                         public void onResponse(JSONArray response) {
                             try {
                                 Log.e("RUPronto", "Inside Response");
-                                //Log.e("RUPronto","I am testing this: "+titleJson.toString());
                                 for (int i = 0; i < response.length(); i++) {
                                     String title = response.getJSONObject(i).get("title").toString();
                                     Log.e("RUPronto", title);
@@ -281,19 +275,15 @@ public class MainActivity extends Activity {
                                         break;
                                     }
                                 }
-
                             } catch (JSONException e) {
                                 e.printStackTrace();
                             }
                             Log.e("RUPronto", response.toString());
                         }
                     }, new Response.ErrorListener() {
-
                         @Override
                         public void onErrorResponse(VolleyError error) {
-                            // TODO Auto-generated method stub
                             Log.e("RUPronto", "Error JSON");
-
                         }
                     });
             Log.e("RUPronto", "JSON Complete");
@@ -301,7 +291,7 @@ public class MainActivity extends Activity {
             requestQueue.add(jsonArrayRequest);
         }
         else{
-            Toast.makeText(MainActivity.this, "Bus Stop not selected!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(MainActivity.this, "Please select all options.", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -314,6 +304,7 @@ public class MainActivity extends Activity {
         long minDiff = 0;
         Log.e("RUPronto","Entering setReminder with value: "+busTiming);
         DateFormat sdf = new SimpleDateFormat("HH:mm");
+        //get difference between current time and selected time
         try {
             Date date = sdf.parse(busTiming);
             String currentDate = sdf.format(new Date());
@@ -346,8 +337,8 @@ public class MainActivity extends Activity {
         timeToTimer = selectedTimeToBus - Integer.parseInt(timeToStop);
         Log.e("RUPronto", "Leave house in:" + timeToTimer);
 
-
         final int finalTimeToTimer = timeToTimer;
+        //Ask confirmation from user if he/she wants to set reminder
         new AlertDialog.Builder(MainActivity.this)
                 .setTitle("Set Reminder")
                 .setMessage("\""+selectedBus+"\" bus at "+selectedStop+" in "+selectedTimeToBus+" minutes. Do you want to be reminded in "+timeToTimer+" minutes?")
@@ -359,13 +350,15 @@ public class MainActivity extends Activity {
                         //notification generator
                         Runnable runnable = new Runnable(){
                             public void run() {
+                                //Set default sound from mobile device
                                 Uri uri= RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
                                 NotificationCompat.Builder builder =
                                         new NotificationCompat.Builder(MainActivity.this)
                                                 .setSmallIcon(R.drawable.ic_launcher)
                                                 .setContentTitle("RUPronto!!")
                                                 .setSound(uri)
-                                                .setContentText("It is time to leave to catch that \""+selectedBus+"\" at "+selectedStop+".");
+                                                .setContentText("It is time to leave to catch the \"" + selectedBus + "\" bus at " + selectedStop + ".");
+
                                 NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
                                 notificationManager.notify(NOTIFICATION_ID, builder.build());
                             }
@@ -373,7 +366,7 @@ public class MainActivity extends Activity {
 
                         //set notication to be called at time
                         handler.postDelayed(runnable, finalTimeToTimer *60000);
-
+                        Toast.makeText(MainActivity.this, "Reminder Set!", Toast.LENGTH_SHORT).show();
                     }
                 })
                 .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
@@ -385,12 +378,10 @@ public class MainActivity extends Activity {
                 .show();
     }
 
-
     /*
     select time that you plan to leave from the bus stop
      */
     public void selectLeavingTime(View view) {
-
         DialogFragment timePickerFragment = new TimePickerFragment();
         timePickerFragment.show(getFragmentManager(), "SELECT TIME");
     }
@@ -399,19 +390,16 @@ public class MainActivity extends Activity {
     select how long it takes for you to walk to your stop
      */
     public void selectTimeToStop(View view) {
-
         NumberPickerFragment numberPickerFragment = new NumberPickerFragment();
         numberPickerFragment.show(getFragmentManager(), "TIME TO STOP");
 
     }
-
 
     /*
     Time to stop selection
     */
     public static class NumberPickerFragment extends DialogFragment{
 
-        Context context;
         Button timeToStop;
         NumberPicker numberPicker;
         @Override
@@ -424,11 +412,12 @@ public class MainActivity extends Activity {
             numberPicker.setEnabled(true);
             numberPicker.setMaxValue(60);
             numberPicker.setMinValue(1);
+            numberPicker.setDescendantFocusability(NumberPicker.FOCUS_BLOCK_DESCENDANTS); //disable soft keyboard
 
             timeToStop = (Button) getActivity().findViewById(R.id.selectTimeToStopText);
             Log.e("RUPronto", timeToStop.getText().toString());
 
-            if(!timeToStop.getText().toString().equals("choose one.."))
+            if(!timeToStop.getText().toString().equals("Select Minutes.."))
             {
                 numberPicker.setValue(Integer.parseInt(timeToStop.getText().toString()));
             }
@@ -448,7 +437,6 @@ public class MainActivity extends Activity {
                     Toast.makeText(getActivity().getBaseContext(), "The time to stop is set!", Toast.LENGTH_SHORT).show();
                 }
             });
-
             // create the dialog from the builder then show
             return builder.create();
         }
@@ -480,7 +468,6 @@ public class MainActivity extends Activity {
                 hour = Integer.parseInt(s.split(":")[0]);
                 minute = Integer.parseInt(s.split(":")[1]);
             }
-
             // Create a new instance of TimePickerDialog and return it
             return new TimePickerDialog(getActivity(), this, hour, minute,
                     android.text.format.DateFormat.is24HourFormat(getActivity()));
