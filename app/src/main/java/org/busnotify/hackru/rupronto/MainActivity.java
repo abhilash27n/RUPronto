@@ -62,29 +62,6 @@ public class MainActivity extends Activity {
     String busTiming;
     String timeToStop;
 
-    /*
-    set Buses List to display on UI
-     */
-    public void setBusesList(ArrayList<String> busesList) {
-        //String[] buses = new String[] { "A", "B", "LX" };
-        ArrayAdapter<String> _busAdapter = new ArrayAdapter<String>(this,
-                android.R.layout.simple_spinner_item,busesList);
-
-        selectBusText.setAdapter(_busAdapter);
-    }
-
-    /*
-    set Stops list to display on UI
-     */
-    public void setStopsList(ArrayList<String> stopsList) {
-        //String[] stops = new String[] { "RSC", "Scott Hall", "Train Station" };
-        ArrayAdapter<String> _stopAdapter = new ArrayAdapter<String>(this,
-                android.R.layout.simple_spinner_item,stopsList);
-
-        selectBusStopText.setAdapter(_stopAdapter);
-    }
-
-
     public static final int NOTIFICATION_ID = 1;
 
     @Override
@@ -155,55 +132,6 @@ public class MainActivity extends Activity {
     }
 
     /*
-    get arrival Timings for the selected route and stop id
-     */
-    public void getTiming(final String routeId, String stopId) {
-
-        //JSON Request to get buses and stops on app load
-        String url = "http://runextbus.herokuapp.com/stop/"+stopId;
-        Log.e("RUPronto", "Calling JSON getTiming for URL " + url);
-        JsonArrayRequest jsonArrayRequest = new JsonArrayRequest
-                (url, new Response.Listener<JSONArray>() {
-
-                    @Override
-                    public void onResponse(JSONArray response) {
-                        try {
-                            Log.e("RUPronto", "Inside Response");
-                            //Log.e("RUPronto","I am testing this: "+titleJson.toString());
-                            for(int i=0;i<response.length();i++){
-                                String title = response.getJSONObject(i).get("title").toString();
-                                Log.e("RUPronto",title);
-                                if(title.equals(routeId)){
-                                    JSONArray predictionTimes = response.getJSONObject(i).getJSONArray("predictions");
-                                    for(int j=0;j<predictionTimes.length();j++){
-                                        String minutes = predictionTimes.getJSONObject(j).get("minutes").toString();
-                                        minutesList.add(Integer.parseInt(minutes));
-                                        Log.e("RUPronto","Adding minutes"+minutes);
-                                    }
-                                    break;
-                                }
-                            }
-
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                        Log.e("RUPronto", response.toString());
-                    }
-                }, new Response.ErrorListener() {
-
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        // TODO Auto-generated method stub
-                        Log.e("RUPronto","Error JSON");
-
-                    }
-                });
-        Log.e("RUPronto", "JSON Complete");
-        RequestQueue requestQueue = Volley.newRequestQueue(MainActivity.this);
-        requestQueue.add(jsonArrayRequest);
-    }
-
-    /*
      populate HashMap with stops and stopsId
      */
     private void populateStopsIdMapping() {
@@ -269,6 +197,141 @@ public class MainActivity extends Activity {
         return super.onOptionsItemSelected(item);
     }
 
+
+    /*
+    set Buses List to display on UI
+     */
+    public void setBusesList(ArrayList<String> busesList) {
+        //String[] buses = new String[] { "A", "B", "LX" };
+        ArrayAdapter<String> _busAdapter = new ArrayAdapter<String>(this,
+                android.R.layout.simple_spinner_item,busesList);
+
+        selectBusText.setAdapter(_busAdapter);
+    }
+
+    /*
+    set Stops list to display on UI
+     */
+    public void setStopsList(ArrayList<String> stopsList) {
+        //String[] stops = new String[] { "RSC", "Scott Hall", "Train Station" };
+        ArrayAdapter<String> _stopAdapter = new ArrayAdapter<String>(this,
+                android.R.layout.simple_spinner_item,stopsList);
+
+        selectBusStopText.setAdapter(_stopAdapter);
+    }
+
+
+    /*
+    get arrival Timings for the selected route and stop id, called upon set reminder because of async calling. setReminder() will be called once time field is set
+     */
+    public void getTiming(View view) {
+
+        String stopId = null;
+        Log.e("RUPronto","Entering getTiming()");
+        //Get the data from all the fields
+        if(selectBusText!=null) {
+            selectedBus = selectBusText.getSelectedItem().toString();
+            Log.e("RUPronto", "The selected bus is: " + selectedBus);
+        }
+
+        if(selectBusStopText!=null) {
+            selectedStop = selectBusStopText.getSelectedItem().toString();
+            Log.e("RUPronto", "The selected stop is: " + selectedStop);
+            stopId = stopsIdMapping.get(selectedStop);
+        }
+
+        if(selectLeavingTimeText!=null) {
+            busTiming = selectLeavingTimeText.getText().toString();
+            Log.e("RUPronto", "The time to catch bus is: " + busTiming);
+        }
+
+        if(selectTimeToStopText!=null) {
+            timeToStop = selectTimeToStopText.getText().toString();
+            Log.e("RUPronto", "The time to bus stop is: " + timeToStop);
+        }
+
+        if(stopId != null) {
+            //JSON Request to get buses and stops on app load
+            String url = "http://runextbus.herokuapp.com/stop/" + stopId;
+            Log.e("RUPronto", "Calling JSON getTiming for URL " + url);
+            JsonArrayRequest jsonArrayRequest = new JsonArrayRequest
+                    (url, new Response.Listener<JSONArray>() {
+
+                        @Override
+                        public void onResponse(JSONArray response) {
+                            try {
+                                Log.e("RUPronto", "Inside Response");
+                                //Log.e("RUPronto","I am testing this: "+titleJson.toString());
+                                for (int i = 0; i < response.length(); i++) {
+                                    String title = response.getJSONObject(i).get("title").toString();
+                                    Log.e("RUPronto", title);
+                                    if (title.equals(selectedBus)) {
+                                        JSONArray predictionTimes = response.getJSONObject(i).getJSONArray("predictions");
+                                        for (int j = 0; j < predictionTimes.length(); j++) {
+                                            String minutes = predictionTimes.getJSONObject(j).get("minutes").toString();
+                                            minutesList.add(Integer.parseInt(minutes));
+                                            Log.e("RUPronto", "Adding minutes" + minutes);
+                                        }
+                                        setReminder();
+                                        break;
+                                    }
+                                }
+
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                            Log.e("RUPronto", response.toString());
+                        }
+                    }, new Response.ErrorListener() {
+
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+                            // TODO Auto-generated method stub
+                            Log.e("RUPronto", "Error JSON");
+
+                        }
+                    });
+            Log.e("RUPronto", "JSON Complete");
+            RequestQueue requestQueue = Volley.newRequestQueue(MainActivity.this);
+            requestQueue.add(jsonArrayRequest);
+        }
+        else{
+            Toast.makeText(MainActivity.this, "Bus Stop not selected!", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    /*
+    set reminder called upon set reminder button click to set reminder
+     */
+    public void setReminder() {
+
+        DateFormat sdf = new SimpleDateFormat("HH:mm");
+        try {
+            Date date = sdf.parse(busTiming);
+            String currentDate = sdf.format(new Date());
+            Date currDate = sdf.parse(currentDate);
+            long minDiff = (date.getTime() - currDate.getTime())/(60*1000);
+            Log.e("RUPronto","Time diff between selected time and current time in min is: "+date.toString()+" "+currentDate.toString()+" "+minDiff);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        //Iterate through time and select closest time to departure to select which bus I want
+        for(int i = 0; i < minutesList.size(); i++){
+            Log.e("RUPronto","Looping through minutes"+minutesList.get(i));
+        }
+
+        NotificationCompat.Builder builder =
+                new NotificationCompat.Builder(this)
+                        .setSmallIcon(R.drawable.ic_launcher)
+                        .setContentTitle("My notification")
+                        .setContentText("Hello World!");
+        NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+        notificationManager.notify(NOTIFICATION_ID, builder.build());
+
+
+
+    }
+
     /*
     select time that you plan to leave from the bus stop
      */
@@ -288,67 +351,10 @@ public class MainActivity extends Activity {
 
     }
 
-    /*
-    set reminder called upon set reminder button click to set reminder
-     */
-    public void setReminder(View view) {
-
-        Log.e("RUPronto","ENTERING SET REMINDER");
-        //Get the data from all the fields
-        if(selectBusText!=null) {
-            selectedBus = selectBusText.getSelectedItem().toString();
-            Log.e("RUPronto", "The selected bus is: " + selectedBus);
-        }
-
-        if(selectBusStopText!=null) {
-            selectedStop = selectBusStopText.getSelectedItem().toString();
-            Log.e("RUPronto", "The selected stop is: " + selectedStop);
-        }
-
-        if(selectLeavingTimeText!=null) {
-            busTiming = selectLeavingTimeText.getText().toString();
-            Log.e("RUPronto", "The time to catch bus is: " + busTiming);
-        }
-
-        if(selectTimeToStopText!=null) {
-            timeToStop = selectTimeToStopText.getText().toString();
-            Log.e("RUPronto", "The time to bus stop is: " + timeToStop);
-        }
-
-        getTiming(selectedBus, stopsIdMapping.get(selectedStop));
-
-        DateFormat sdf = new SimpleDateFormat("HH:mm");
-        try {
-            Date date = sdf.parse(busTiming);
-            String currentDate = sdf.format(new Date());
-            Date currDate = sdf.parse(currentDate);
-            long minDiff = (date.getTime() - currDate.getTime())/(60*1000);
-            Log.e("RUPronto","Time diff between selected time and current time in min is: "+date.toString()+" "+currentDate.toString()+" "+minDiff);
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-        //Iterate through time and select closest time to departure to select which bus I want
-        for(int i = 0; i < minutesList.size(); i++){
-            Log.e("RUPronto","Looping through minutes"+minutesList.get(i));
-
-
-        }
-
-        NotificationCompat.Builder builder =
-                new NotificationCompat.Builder(this)
-                        .setSmallIcon(R.drawable.ic_launcher)
-                        .setContentTitle("My notification")
-                        .setContentText("Hello World!");
-        NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-        notificationManager.notify(NOTIFICATION_ID, builder.build());
-
-
-
-    }
 
     /*
     Time to stop selection
-     */
+    */
     public static class NumberPickerFragment extends DialogFragment{
 
         Context context;
@@ -431,7 +437,7 @@ public class MainActivity extends Activity {
          */
         public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
             // Do something with the time chosen by the user
-            Toast.makeText(getActivity(), "Time Selected: ", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getActivity(), "Time Selected!", Toast.LENGTH_SHORT).show();
             String s = String.valueOf(hourOfDay)+ ":" + String.valueOf(minute);
             leaveTime.setText(s);
             fragmentHolder.setText(""+hourOfDay+":"+minute);

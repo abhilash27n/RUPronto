@@ -80,7 +80,7 @@
         android:layout_height="wrap_content"
         android:text="Set reminder"
         android:id="@+id/setButton"
-        android:onClick="setReminder"
+        android:onClick="getTiming"
         android:layout_marginBottom="59dp"
         android:layout_alignParentBottom="true"
         android:layout_toEndOf="@+id/leavingTimeText" />
