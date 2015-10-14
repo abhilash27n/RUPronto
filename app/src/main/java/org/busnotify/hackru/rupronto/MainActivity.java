@@ -267,6 +267,7 @@ public class MainActivity extends Activity {
                                     String title = response.getJSONObject(i).get("title").toString();
                                     Log.e("RUPronto", title);
                                     if (title.equals(selectedBus)) {
+                                        minutesList.clear();
                                         JSONArray predictionTimes = response.getJSONObject(i).getJSONArray("predictions");
                                         for (int j = 0; j < predictionTimes.length(); j++) {
                                             String minutes = predictionTimes.getJSONObject(j).get("minutes").toString();
@@ -305,34 +306,48 @@ public class MainActivity extends Activity {
     set reminder called upon set reminder button click to set reminder
      */
     public void setReminder() {
+        int selectedTimeToBus = 0;
+        int timeToTimer = 0;
+        long minDiff = 0;
         Log.e("RUPronto","Entering setReminder with value: "+busTiming.toString());
         DateFormat sdf = new SimpleDateFormat("HH:mm");
         try {
             Date date = sdf.parse(busTiming);
             String currentDate = sdf.format(new Date());
             Date currDate = sdf.parse(currentDate);
-            long minDiff = (date.getTime() - currDate.getTime()) / (60 * 1000);
+            minDiff = (date.getTime() - currDate.getTime()) / (60 * 1000);
+            Log.e("RUPronto", "Time diff between selected time and current time in min is: " + date.toString() + " " + currentDate.toString() + " " + minDiff);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
 
-            // Finding minimum difference using extra storage.. Urgh!
-            ArrayList<Integer> minDiffList = new ArrayList<Integer>();
+
+        // Finding minimum difference using extra storage.. Urgh!   --SORRY I am commenting this(need to return which bus I want to select)
+            /*ArrayList<Integer> minDiffList = new ArrayList<Integer>();
             for (int i = 0; i < minutesList.size(); i++) {
                 int dist = minutesList.get(i) - (int)minDiff;
                 if (dist > 0)
                     minDiffList.add(dist);
-            }
+            }*/
+        //int reminderMinutes = Collections.min(minDiffList);
+        // Log.e("RUPronto", "The reminder time: "+reminderMinutes);
 
-            int reminderMinutes = Collections.min(minDiffList);
-            //TODO: Invoke timer here for reminder saying that there is a bus in (Time to Stop) minutes
+        //Finding minimum difference without extra storage.. Yayyiee!!
+        selectedTimeToBus = 0;
+        for(int i=0; i < minutesList.size(); i++){
+            int diff = minutesList.get(i) -  (int)minDiff;
+            if(diff > 0)
+                break;
+            selectedTimeToBus = minutesList.get(i);
+        }
+        Log.e("RUPronto", "The bus to catch is: "+selectedTimeToBus);
+        timeToTimer = selectedTimeToBus - Integer.parseInt(timeToStop);
+        Log.e("RUPronto", "Leave house in:" + timeToStop);
 
-            Log.e("RUPronto", "Time diff between selected time and current time in min is: " + date.toString() + " " + currentDate.toString() + " " + minDiff);
-            Log.e("RUPronto", "The reminder time: "+reminderMinutes);
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-        //Iterate through time and select closest time to departure to select which bus I want
-        for(int i = 0; i < minutesList.size(); i++){
-            Log.e("RUPronto","Looping through minutes"+minutesList.get(i));
-        }
+        //TODO: Invoke timer here for reminder saying that there is a bus in (Time to Stop) minutes
+
+
+
 
         NotificationCompat.Builder builder =
                 new NotificationCompat.Builder(this)
