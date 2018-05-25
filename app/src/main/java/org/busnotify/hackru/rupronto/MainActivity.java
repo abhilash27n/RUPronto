@@ -460,12 +460,11 @@ public class MainActivity extends Activity {
         public Dialog onCreateDialog(Bundle savedInstanceState) {
             // Use the current time as the default values for the picker
             final Calendar c = Calendar.getInstance();
-
-            if(fragmentHolder.getText()=="") {
+            if (fragmentHolder != null && fragmentHolder.getText() =="") {
                 hour = c.get(Calendar.HOUR_OF_DAY);
                 minute = c.get(Calendar.MINUTE);
             }
-            else {
+            else if (fragmentHolder != null){
                 String s = fragmentHolder.getText().toString();
                 hour = Integer.parseInt(s.split(":")[0]);
                 minute = Integer.parseInt(s.split(":")[1]);
@@ -479,14 +478,14 @@ public class MainActivity extends Activity {
         what happens on time set
          */
         public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+            if (leaveTime == null || fragmentHolder == null) {
+                    return;
+            }
             // Do something with the time chosen by the user
             Toast.makeText(getActivity(), "Time Selected!", Toast.LENGTH_SHORT).show();
             String s = String.valueOf(hourOfDay)+ ":" + String.valueOf(minute);
             leaveTime.setText(s);
             fragmentHolder.setText((getString(R.string.hour_minute_string, hourOfDay, minute)));
         }
-
-
     }
-
 }
