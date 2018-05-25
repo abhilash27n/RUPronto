@@ -1,13 +1,13 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 23
-    buildToolsVersion "23.0.1"
+    compileSdkVersion 27
+    buildToolsVersion '27.0.3'
 
     defaultConfig {
         applicationId "org.busnotify.hackru.rupronto"
         minSdkVersion 21
-        targetSdkVersion 23
+        targetSdkVersion 27
         versionCode 1
         versionName "1.0"
     }
@@ -20,8 +20,10 @@ android {
 }
 
 dependencies {
-    compile fileTree(include: ['*.jar'], dir: 'libs')
-    compile files('libs/httpclient-4.5.1.jar')
-    compile files('libs/volley.jar')
-    compile "com.android.support:support-v4:23.0.1"
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    implementation files('libs/httpclient-4.5.1.jar')
+    implementation files('libs/volley.jar')
+    implementation "com.android.support:support-v4:27.1.1"
+    implementation 'com.jakewharton:butterknife:8.8.1'
+    annotationProcessor 'com.jakewharton:butterknife-compiler:8.8.1'
 }
